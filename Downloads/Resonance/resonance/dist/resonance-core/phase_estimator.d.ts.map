@@ -1,0 +1,1 @@
+{"version":3,"file":"phase_estimator.d.ts","sourceRoot":"","sources":["../../resonance-core/phase_estimator.ts"],"names":[],"mappings":"AAAA;;;GAGG;AAEH,qBAAa,cAAc;IACb,OAAO,CAAC,QAAQ;gBAAR,QAAQ,SAAQ;IAEpC;;;;;OAKG;IACH,aAAa,CAAC,QAAQ,EAAE,MAAM,EAAE,EAAE,YAAY,EAAE,MAAM,GAAG,MAAM;IAW/D;;;;OAIG;IACH,YAAY,CAAC,QAAQ,EAAE,MAAM,EAAE,GAAG,MAAM;CA6BzC"}
