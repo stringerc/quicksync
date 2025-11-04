@@ -1,0 +1,9 @@
+{
+  "buildCommand": "cd webapp && npm run build",
+  "devCommand": "cd webapp && npm run dev",
+  "installCommand": "cd webapp && npm install",
+  "framework": "nextjs",
+  "regions": ["iad1"],
+  "rootDirectory": "webapp"
+}
+
