@@ -27,5 +27,14 @@ export declare function computeResonanceFromInputs(inputs: ResonanceInputs): {
     coherenceScore: number;
     tailHealthScore: number;
     timingScore: number;
+    gpd?: {
+        xi: number;
+        sigma: number;
+        threshold: number;
+    };
+    tailQuantiles?: {
+        q99: number;
+        q99_9: number;
+    };
 };
 //# sourceMappingURL=resonance_bridge.d.ts.map

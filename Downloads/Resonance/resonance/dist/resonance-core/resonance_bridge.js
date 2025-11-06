@@ -16,6 +16,8 @@ function computeResonanceFromInputs(inputs) {
     const values = tailSamples.map(s => s.value).sort((a, b) => a - b);
     const n = values.length;
     let tailHealthScore = 0.5; // neutral default
+    let gpd;
+    let tailQuantiles;
     if (n >= 50) {
         const idxThresh = Math.max(0, Math.min(n - 1, Math.floor(tailThresholdQuantile * n)));
         const threshold = values[idxThresh];
@@ -23,11 +25,22 @@ function computeResonanceFromInputs(inputs) {
         const tailFrac = exceedances.length / n;
         if (exceedances.length >= 10 && tailFrac > 0) {
             try {
-                const gpd = (0, resonance_calculus_1.fitGPD_PWM)(exceedances, threshold, tailFrac);
-                const q99 = (0, resonance_calculus_1.tailQuantileFromGPD)(0.99, gpd);
+                const gpdParams = (0, resonance_calculus_1.fitGPD_PWM)(exceedances, threshold, tailFrac);
+                const q99 = (0, resonance_calculus_1.tailQuantileFromGPD)(0.99, gpdParams);
+                const q99_9 = (0, resonance_calculus_1.tailQuantileFromGPD)(0.999, gpdParams);
                 // Normalize q99 against threshold: lower is better.
                 const ratio = q99 <= 0 ? 1 : threshold / q99;
                 tailHealthScore = Math.min(1, Math.max(0, ratio));
+                // Store GPD parameters and quantiles for telemetry
+                gpd = {
+                    xi: gpdParams.xi,
+                    sigma: gpdParams.sigma,
+                    threshold: gpdParams.threshold,
+                };
+                tailQuantiles = {
+                    q99,
+                    q99_9,
+                };
             }
             catch (e) {
                 // Fallback to neutral if GPD fit fails
@@ -56,6 +69,6 @@ function computeResonanceFromInputs(inputs) {
     }
     const comp = { coherenceScore, tailHealthScore, timingScore };
     const R = (0, resonance_calculus_1.aggregateResonance)(comp, { wC: 1, wT: 1, wTiming: 1 });
-    return { R, lambdaRes, coherenceScore, tailHealthScore, timingScore };
+    return { R, lambdaRes, coherenceScore, tailHealthScore, timingScore, gpd, tailQuantiles };
 }
 //# sourceMappingURL=resonance_bridge.js.map

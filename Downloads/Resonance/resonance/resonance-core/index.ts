@@ -72,6 +72,8 @@ export class ResonanceCore {
             tailHealthScore: resonance.tailHealthScore,
             timingScore: resonance.timingScore,
             lambdaRes: resonance.lambdaRes,
+            gpd: resonance.gpd,
+            tailQuantiles: resonance.tailQuantiles,
           };
         }
       } catch (e) {
@@ -106,6 +108,15 @@ export class ResonanceCore {
     tailHealthScore: number; 
     timingScore: number; 
     lambdaRes: number;
+    gpd?: {
+      xi: number;
+      sigma: number;
+      threshold: number;
+    };
+    tailQuantiles?: {
+      q99: number;
+      q99_9: number;
+    };
   } {
     // Get tail samples from histogram
     const tailSamples = this.getTailSamples();

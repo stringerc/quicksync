@@ -74,6 +74,8 @@ class ResonanceCore {
                         tailHealthScore: resonance.tailHealthScore,
                         timingScore: resonance.timingScore,
                         lambdaRes: resonance.lambdaRes,
+                        gpd: resonance.gpd,
+                        tailQuantiles: resonance.tailQuantiles,
                     };
                 }
             }

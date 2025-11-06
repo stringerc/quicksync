@@ -93,13 +93,36 @@ function secureHandler(handler) {
         handler(req, res);
     };
 }
-// Metrics server (Prometheus format)
-const metricsPort = parseInt(process.env.RESONANCE_METRICS_PORT || '9090');
-const metricsServer = http.createServer(secureHandler((req, res) => {
-    if (req.url === '/metrics') {
+// Use Render's PORT or fallback to legacy ports for local development
+// Render requires binding to PORT, but we support legacy env vars for local dev
+const port = parseInt(process.env.PORT || process.env.RESONANCE_HEALTH_PORT || '8080');
+// Single server for all endpoints (required by Render)
+const server = http.createServer((req, res) => {
+    // Set security headers
+    (0, security_1.setSecurityHeaders)(res, securityConfig);
+    // Health endpoint (public, no auth required)
+    if (req.url === '/health' || req.url === '/healthz') {
         const state = core.getState();
-        const modeValue = state.mode === 'observe' ? 0 : state.mode === 'shadow' ? 1 : state.mode === 'adaptive' ? 2 : 3;
-        const metrics = `# HELP resonance_R Kuramoto order parameter R(t) [0-1]
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+            status: 'healthy',
+            resonance: {
+                mode: state.mode,
+                R: state.R.toFixed(3),
+                K: state.K.toFixed(3),
+                entropy: state.spectralEntropy.toFixed(3),
+            },
+            timestamp: new Date().toISOString(),
+        }));
+        return;
+    }
+    // Metrics endpoint (protected, requires API key)
+    if (req.url === '/metrics') {
+        // Apply security middleware for metrics endpoint
+        const secureMetricsHandler = secureHandler((req, res) => {
+            const state = core.getState();
+            const modeValue = state.mode === 'observe' ? 0 : state.mode === 'shadow' ? 1 : state.mode === 'adaptive' ? 2 : 3;
+            const metrics = `# HELP resonance_R Kuramoto order parameter R(t) [0-1]
 # TYPE resonance_R gauge
 resonance_R ${state.R}
 
@@ -120,52 +143,42 @@ resonance_mode{value="${state.mode}"} ${modeValue}
 resonance_up 1
 
 `;
-        res.writeHead(200, { 'Content-Type': 'text/plain' });
-        res.end(metrics);
+            res.writeHead(200, { 'Content-Type': 'text/plain' });
+            res.end(metrics);
+        });
+        secureMetricsHandler(req, res);
+        return;
     }
-    else {
-        res.writeHead(404);
-        res.end('Not found');
-    }
-}));
-// Health check server (public, no auth required)
-const healthPort = parseInt(process.env.RESONANCE_HEALTH_PORT || '8080');
-const healthServer = http.createServer((req, res) => {
-    // Set security headers even for health endpoint
-    (0, security_1.setSecurityHeaders)(res, securityConfig);
-    if (req.url === '/health' || req.url === '/healthz') {
-        const state = core.getState();
+    // Root endpoint (for Render health checks)
+    if (req.url === '/' || req.url === '') {
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
-            status: 'healthy',
-            resonance: {
-                mode: state.mode,
-                R: state.R.toFixed(3),
-                K: state.K.toFixed(3),
-                entropy: state.spectralEntropy.toFixed(3),
+            service: 'resonance-agent',
+            status: 'running',
+            endpoints: {
+                health: '/health',
+                metrics: '/metrics',
             },
-            timestamp: new Date().toISOString(),
         }));
+        return;
     }
-    else {
-        res.writeHead(404);
-        res.end('Not found');
-    }
+    // 404 for unknown routes
+    res.writeHead(404, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Not found' }));
 });
-metricsServer.listen(metricsPort, () => {
-    console.log(`Metrics server started on port ${metricsPort}`);
+// Start server
+server.listen(port, '0.0.0.0', () => {
+    console.log(`Resonance Agent started`);
+    console.log(`Mode: ${mode}`);
+    console.log(`Port: ${port}`);
+    console.log(`Health: http://0.0.0.0:${port}/health`);
+    console.log(`Metrics: http://0.0.0.0:${port}/metrics`);
     if (securityConfig.apiKey) {
-        console.log(`Security: API key authentication enabled`);
+        console.log(`Security: API key authentication enabled for /metrics`);
     }
     else {
         console.warn(`Security: API key not set - metrics endpoint is unprotected`);
     }
-});
-healthServer.listen(healthPort, () => {
-    console.log(`Resonance Agent started`);
-    console.log(`Mode: ${mode}`);
-    console.log(`Health: http://localhost:${healthPort}/health`);
-    console.log(`Metrics: http://localhost:${metricsPort}/metrics`);
 });
 // Update metrics periodically
 setInterval(() => {
@@ -176,8 +189,16 @@ setInterval(() => {
 // Graceful shutdown
 process.on('SIGTERM', () => {
     console.log('SIGTERM received, shutting down gracefully');
-    metricsServer.close();
-    healthServer.close();
-    process.exit(0);
+    server.close(() => {
+        console.log('Server closed');
+        process.exit(0);
+    });
+});
+process.on('SIGINT', () => {
+    console.log('SIGINT received, shutting down gracefully');
+    server.close(() => {
+        console.log('Server closed');
+        process.exit(0);
+    });
 });
 //# sourceMappingURL=index_secure.js.map
