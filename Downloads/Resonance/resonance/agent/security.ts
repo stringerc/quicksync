@@ -47,11 +47,18 @@ export function validateApiKey(req: any, config: SecurityConfig): boolean {
     ? authHeader.substring(7)
     : authHeader;
 
-  // Use constant-time comparison to prevent timing attacks
-  return crypto.timingSafeEqual(
-    Buffer.from(providedKey),
-    Buffer.from(config.apiKey)
-  );
+  const providedBuffer = Buffer.from(providedKey);
+  const expectedBuffer = Buffer.from(config.apiKey);
+
+  if (providedBuffer.length !== expectedBuffer.length) {
+    return false;
+  }
+
+  try {
+    return crypto.timingSafeEqual(providedBuffer, expectedBuffer);
+  } catch (err) {
+    return false;
+  }
 }
 
 /**
