@@ -120,28 +120,7 @@ resonance_tail_q99_9 ${calculus.tailQuantiles.q99_9}
 // Health check server
 const healthPort = parseInt(process.env.RESONANCE_HEALTH_PORT || '8080');
 const healthServer = http.createServer((req, res) => {
-  if (req.url === '/health' || req.url === '/healthz') {
-    const state = core.getState();
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({
-      status: 'healthy',
-      resonance: {
-        mode: state.mode,
-        R: state.R.toFixed(3),
-        K: state.K.toFixed(3),
-        entropy: state.spectralEntropy.toFixed(3),
-      },
-      timestamp: new Date().toISOString(),
-    }));
-  } else {
-    res.writeHead(404);
-    res.end('Not found');
-  }
-});
-
-const intakePort = parseInt(process.env.RESONANCE_INTAKE_PORT || '8181');
-const intakeServer = http.createServer((req, res) => {
-  const parsedUrl = new URL(req.url ?? '/', `http://localhost:${intakePort}`);
+  const parsedUrl = new URL(req.url ?? '/', `http://localhost:${healthPort}`);
 
   if (req.method === 'POST' && parsedUrl.pathname === '/intake/phase') {
     let body = '';
@@ -183,6 +162,22 @@ const intakeServer = http.createServer((req, res) => {
         res.end(JSON.stringify({ error: err?.message ?? 'Invalid payload' }));
       }
     });
+    return;
+  }
+
+  if (parsedUrl.pathname === '/health' || parsedUrl.pathname === '/healthz') {
+    const state = core.getState();
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({
+      status: 'healthy',
+      resonance: {
+        mode: state.mode,
+        R: state.R.toFixed(3),
+        K: state.K.toFixed(3),
+        entropy: state.spectralEntropy.toFixed(3),
+      },
+      timestamp: new Date().toISOString(),
+    }));
   } else {
     res.writeHead(404);
     res.end('Not found');
@@ -197,11 +192,8 @@ healthServer.listen(healthPort, () => {
   console.log(`Resonance Agent started`);
   console.log(`Mode: ${mode}`);
   console.log(`Health: http://localhost:${healthPort}/health`);
+  console.log(`Phase intake: POST http://localhost:${healthPort}/intake/phase`);
   console.log(`Metrics: http://localhost:${metricsPort}/metrics`);
-});
-
-intakeServer.listen(intakePort, () => {
-  console.log(`Phase intake listening on http://localhost:${intakePort}/intake/phase`);
 });
 
 // Update metrics periodically
@@ -219,7 +211,6 @@ process.on('SIGTERM', async () => {
   console.log('SIGTERM received, shutting down gracefully');
   metricsServer.close();
   healthServer.close();
-  intakeServer.close();
   process.exit(0);
 });
 
@@ -227,6 +218,5 @@ process.on('SIGINT', async () => {
   console.log('SIGINT received, shutting down gracefully');
   metricsServer.close();
   healthServer.close();
-  intakeServer.close();
   process.exit(0);
 });
