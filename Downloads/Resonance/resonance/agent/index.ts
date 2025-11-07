@@ -6,6 +6,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as http from 'http';
+import { URL } from 'url';
 import { ResonanceCore } from '../resonance-core';
 
 // Load configuration
@@ -22,6 +23,8 @@ const core = new ResonanceCore({
   defaultBatchLatencyMs: defaults.defaultBatchLatencyMs || 25,
 });
 core.setMode(mode);
+
+let lastIntakeAt = 0;
 
 // Metrics server (Prometheus format)
 const metricsPort = parseInt(process.env.RESONANCE_METRICS_PORT || '9090');
@@ -136,6 +139,56 @@ const healthServer = http.createServer((req, res) => {
   }
 });
 
+const intakePort = parseInt(process.env.RESONANCE_INTAKE_PORT || '8181');
+const intakeServer = http.createServer((req, res) => {
+  const parsedUrl = new URL(req.url ?? '/', `http://localhost:${intakePort}`);
+
+  if (req.method === 'POST' && parsedUrl.pathname === '/intake/phase') {
+    let body = '';
+    req.on('data', (chunk) => {
+      body += chunk;
+      if (body.length > 1e6) {
+        req.socket.destroy();
+      }
+    });
+
+    req.on('end', () => {
+      try {
+        const payload = body ? JSON.parse(body) : {};
+        const phases = Array.isArray(payload.phases) ? payload.phases : [];
+
+        if (!phases.length) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Payload must include a non-empty `phases` array (radians).' }));
+          return;
+        }
+
+        const state = core.getState();
+        const spectralEntropy = typeof payload.spectralEntropy === 'number' ? payload.spectralEntropy : state.spectralEntropy;
+        const p99Risk = typeof payload.p99Risk === 'number' ? payload.p99Risk : 0.1;
+
+        const features = core.update(phases, spectralEntropy, p99Risk);
+        lastIntakeAt = Date.now();
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          message: 'Phase sample ingested',
+          R: features.R,
+          spectralEntropy: features.spectralEntropy,
+          p99Risk: features.p99Risk,
+        }));
+      } catch (err: any) {
+        console.error('Failed to ingest phase sample:', err);
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: err?.message ?? 'Invalid payload' }));
+      }
+    });
+  } else {
+    res.writeHead(404);
+    res.end('Not found');
+  }
+});
+
 metricsServer.listen(metricsPort, () => {
   console.log(`Metrics server started on port ${metricsPort}`);
 });
@@ -147,9 +200,16 @@ healthServer.listen(healthPort, () => {
   console.log(`Metrics: http://localhost:${metricsPort}/metrics`);
 });
 
+intakeServer.listen(intakePort, () => {
+  console.log(`Phase intake listening on http://localhost:${intakePort}/intake/phase`);
+});
+
 // Update metrics periodically
 setInterval(() => {
-  // Update state to generate metrics
+  if (Date.now() - lastIntakeAt < 30000) {
+    return; // recent real sample ingested, no need for synthetic data
+  }
+
   const phases = [Math.random() * Math.PI * 2, Math.random() * Math.PI * 2, Math.random() * Math.PI * 2];
   core.update(phases, 0.5, 0.1);
 }, 5000);
@@ -159,6 +219,7 @@ process.on('SIGTERM', async () => {
   console.log('SIGTERM received, shutting down gracefully');
   metricsServer.close();
   healthServer.close();
+  intakeServer.close();
   process.exit(0);
 });
 
@@ -166,5 +227,6 @@ process.on('SIGINT', async () => {
   console.log('SIGINT received, shutting down gracefully');
   metricsServer.close();
   healthServer.close();
+  intakeServer.close();
   process.exit(0);
 });

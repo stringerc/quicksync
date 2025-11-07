@@ -1,5 +1,5 @@
 {
-  "mode": "shadow",
+  "mode": "adaptive",
   "R_band": [0.35, 0.65],
   "K_min": 0.05,
   "K_max": 1.0,

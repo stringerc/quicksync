@@ -44,6 +44,21 @@ RESONANCE_MODE=active ./run.sh resonance
 ./report.sh baseline resonance
 ```
 
+### Feed Phase Samples to the Agent
+
+Use the helper script to stream synthetic phase samples into the agent's intake endpoint (default is the Render-hosted service):
+
+```bash
+# Optional: override the intake URL and sample count
+export RESONANCE_AGENT_INTAKE="https://syncscript-backend-1.onrender.com/intake/phase"
+export PHASE_SAMPLES=240          # total samples to send
+export PHASE_INTERVAL_MS=1000     # delay between samples
+
+node bench/feed_phases.js
+```
+
+After a few minutes of streaming, the Resonance Calculus metrics will populate and the band-compliance percentage will begin trending upward.
+
 ## Benchmark Configs
 
 ### wrk2-config.yaml
