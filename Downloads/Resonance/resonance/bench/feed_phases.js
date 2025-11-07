@@ -1,8 +1,13 @@
 #!/usr/bin/env node
 
-const DEFAULT_URL = process.env.RESONANCE_AGENT_INTAKE || 'https://syncscript-backend-1.onrender.com/intake/phase';
+const DEFAULT_URL =
+  process.env.RESONANCE_AGENT_INTAKE || 'https://syncscript-backend-1.onrender.com/intake/phase';
 const TOTAL_SAMPLES = parseInt(process.env.PHASE_SAMPLES || '120', 10);
 const INTERVAL_MS = parseInt(process.env.PHASE_INTERVAL_MS || '1000', 10);
+const INTAKE_KEY =
+  process.env.RESONANCE_INTAKE_KEY ||
+  process.env.RESONANCE_INTAKE_API_KEY ||
+  process.env.RESONANCE_API_KEY;
 
 if (!globalThis.fetch) {
   console.error('This script requires Node.js 18+ (fetch API available)');
@@ -28,9 +33,14 @@ async function sendSample(sampleIndex) {
     p99Risk: 0.1,
   };
 
+  const headers = { 'Content-Type': 'application/json' };
+  if (INTAKE_KEY) {
+    headers.Authorization = `Bearer ${INTAKE_KEY}`;
+  }
+
   const response = await fetch(DEFAULT_URL, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     body: JSON.stringify(payload),
   });
 
@@ -45,6 +55,10 @@ async function sendSample(sampleIndex) {
 
 async function main() {
   console.log(`Streaming ${TOTAL_SAMPLES} phase samples to ${DEFAULT_URL} (interval ${INTERVAL_MS} ms)`);
+  if (INTAKE_KEY) {
+    console.log('Using authenticated intake with provided API key.');
+  }
+
   for (let i = 0; i < TOTAL_SAMPLES; i += 1) {
     try {
       await sendSample(i);
