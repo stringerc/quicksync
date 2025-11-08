@@ -21,6 +21,7 @@ import {
   setSecurityHeaders,
   validateApiKey,
 } from './security';
+import { handleCliUpdateCommand, scheduleAutoUpdate } from './updater';
 
 // -----------------------------------------------------------------------------
 // Configuration
@@ -68,6 +69,9 @@ const port = parseInt(
     '8080',
   10,
 );
+
+// Handle CLI update commands (e.g., --install-staged-update) before booting the server
+handleCliUpdateCommand({ stagingDir: process.env.RESONANCE_UPDATE_STAGING_DIR });
 
 // -----------------------------------------------------------------------------
 // Core initialisation
@@ -364,6 +368,14 @@ server.listen(port, '0.0.0.0', () => {
   } else {
     console.warn('Intake: No API key configured - /intake/phase accepts unauthenticated traffic');
   }
+
+  scheduleAutoUpdate({
+    manifestUrl: process.env.RESONANCE_UPDATE_MANIFEST_URL,
+    intervalMs: process.env.RESONANCE_UPDATE_INTERVAL_MS
+      ? parseInt(process.env.RESONANCE_UPDATE_INTERVAL_MS, 10)
+      : undefined,
+    stagingDir: process.env.RESONANCE_UPDATE_STAGING_DIR,
+  });
 });
 
 // -----------------------------------------------------------------------------

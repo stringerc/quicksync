@@ -40,6 +40,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
 const http = __importStar(require("http"));
+const url_1 = require("url");
 const resonance_core_1 = require("../resonance-core");
 // Load configuration
 const configPath = process.env.RESONANCE_CONFIG_FILE || path.join(__dirname, '../../policy/defaults.json');
@@ -54,6 +55,7 @@ const core = new resonance_core_1.ResonanceCore({
     defaultBatchLatencyMs: defaults.defaultBatchLatencyMs || 25,
 });
 core.setMode(mode);
+let lastIntakeAt = 0;
 // Metrics server (Prometheus format)
 const metricsPort = parseInt(process.env.RESONANCE_METRICS_PORT || '9090');
 const metricsServer = http.createServer((req, res) => {
@@ -142,7 +144,46 @@ resonance_tail_q99_9 ${calculus.tailQuantiles.q99_9}
 // Health check server
 const healthPort = parseInt(process.env.RESONANCE_HEALTH_PORT || '8080');
 const healthServer = http.createServer((req, res) => {
-    if (req.url === '/health' || req.url === '/healthz') {
+    const parsedUrl = new url_1.URL(req.url ?? '/', `http://localhost:${healthPort}`);
+    if (req.method === 'POST' && parsedUrl.pathname === '/intake/phase') {
+        let body = '';
+        req.on('data', (chunk) => {
+            body += chunk;
+            if (body.length > 1e6) {
+                req.socket.destroy();
+            }
+        });
+        req.on('end', () => {
+            try {
+                const payload = body ? JSON.parse(body) : {};
+                const phases = Array.isArray(payload.phases) ? payload.phases : [];
+                if (!phases.length) {
+                    res.writeHead(400, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: 'Payload must include a non-empty `phases` array (radians).' }));
+                    return;
+                }
+                const state = core.getState();
+                const spectralEntropy = typeof payload.spectralEntropy === 'number' ? payload.spectralEntropy : state.spectralEntropy;
+                const p99Risk = typeof payload.p99Risk === 'number' ? payload.p99Risk : 0.1;
+                const features = core.update(phases, spectralEntropy, p99Risk);
+                lastIntakeAt = Date.now();
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({
+                    message: 'Phase sample ingested',
+                    R: features.R,
+                    spectralEntropy: features.spectralEntropy,
+                    p99Risk: features.p99Risk,
+                }));
+            }
+            catch (err) {
+                console.error('Failed to ingest phase sample:', err);
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: err?.message ?? 'Invalid payload' }));
+            }
+        });
+        return;
+    }
+    if (parsedUrl.pathname === '/health' || parsedUrl.pathname === '/healthz') {
         const state = core.getState();
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
@@ -168,11 +209,14 @@ healthServer.listen(healthPort, () => {
     console.log(`Resonance Agent started`);
     console.log(`Mode: ${mode}`);
     console.log(`Health: http://localhost:${healthPort}/health`);
+    console.log(`Phase intake: POST http://localhost:${healthPort}/intake/phase`);
     console.log(`Metrics: http://localhost:${metricsPort}/metrics`);
 });
 // Update metrics periodically
 setInterval(() => {
-    // Update state to generate metrics
+    if (Date.now() - lastIntakeAt < 30000) {
+        return; // recent real sample ingested, no need for synthetic data
+    }
     const phases = [Math.random() * Math.PI * 2, Math.random() * Math.PI * 2, Math.random() * Math.PI * 2];
     core.update(phases, 0.5, 0.1);
 }, 5000);
