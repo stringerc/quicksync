@@ -1,31 +1,14 @@
-import { Navbar } from '@/components/Navbar';
-import { Hero } from '@/components/Hero';
-import { ProofSection } from '@/components/ProofSection';
-import { Features } from '@/components/Features';
-import { AttractorMode } from '@/components/AttractorMode';
-import { ProductShowcase } from '@/components/ProductShowcase';
-import { BeforeAfter } from '@/components/BeforeAfter';
-import { Pricing } from '@/components/Pricing';
-import { FAQ } from '@/components/FAQ';
-import { EmailCapture } from '@/components/EmailCapture';
-import { FinalCTA } from '@/components/FinalCTA';
-import { ScrollProgress } from '@/components/ScrollProgress';
-
 export default function Home() {
   return (
-    <div className="bg-[#0a0a0f]">
-      <ScrollProgress />
-      <Navbar />
-      <Hero />
-      <ProofSection />
-      <Features />
-      <AttractorMode />
-      <ProductShowcase />
-      <BeforeAfter />
-      <Pricing />
-      <FAQ />
-      <EmailCapture />
-      <FinalCTA />
-    </div>
+    <main className="flex min-h-screen flex-col items-center justify-center p-24">
+      <div className="text-center">
+        <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">
+          Resonance Engine
+        </h1>
+        <p className="mt-6 text-lg leading-8 text-muted-foreground">
+          Where System Components Find Harmony
+        </p>
+      </div>
+    </main>
   );
 }
