@@ -1,0 +1,72 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                  String   @id @default(uuid())
+  email               String   @unique
+  magicLinkToken      String?  @map("magic_link_token")
+  magicLinkExpires    DateTime? @map("magic_link_expires")
+  createdAt           DateTime @default(now()) @map("created_at")
+
+  jobs                Job[]
+  credits             Credit[]
+
+  @@map("users")
+}
+
+model Job {
+  id                      String   @id @default(uuid())
+  userId                  String   @map("user_id")
+  fileName                String   @map("file_name")
+  filePath                String   @map("file_path")
+  status                  String   @default("pending") // pending, processing, completed, failed, needs_review
+  createdAt               DateTime @default(now()) @map("created_at")
+  processedAt             DateTime? @map("processed_at")
+  paymentStatus           String   @default("pending") @map("payment_status") // pending, paid, refunded
+  stripePaymentId         String?  @map("stripe_payment_id") // payment_intent ID
+  stripeCheckoutSessionId String?  @map("stripe_checkout_session_id")
+  paidAt                  DateTime? @map("paid_at")
+  creditRedeemedAt        DateTime? @map("credit_redeemed_at")
+  reviewRequestedAt       DateTime? @map("review_requested_at")
+  
+  // Metadata stored as JSON string (SQLite limitation)
+  rowCount                Int?     @map("row_count")
+  dateRangeStart          DateTime? @map("date_range_start")
+  dateRangeEnd            DateTime? @map("date_range_end")
+  totalDebit              String?  @map("total_debit") // Decimal as string
+  totalCredit             String?  @map("total_credit")
+  totalBalance            String?  @map("total_balance")
+  confidenceScore         Float?   @map("confidence_score")
+  
+  // File paths for generated outputs
+  csvFilePath             String?  @map("csv_file_path")
+  qboFilePath             String?  @map("qbo_file_path")
+
+  user                    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("jobs")
+}
+
+model Credit {
+  id          String   @id @default(uuid())
+  userId      String   @map("user_id")
+  balance     Int      @default(0) // Current credit balance
+  source      String?  // e.g., "purchase", "promo"
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId])
+  @@map("credits")
+}
+
