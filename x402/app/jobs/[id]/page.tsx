@@ -129,8 +129,18 @@ export default function JobPage() {
 
       const data = await response.json()
 
-      if (response.ok && data.url) {
-        window.location.href = data.url
+      if (response.ok) {
+        if (data.free) {
+          // Free first file - refresh page to show updated status
+          alert('🎉 Free first file! Your job is ready for download.')
+          fetchJob()
+        } else if (data.url) {
+          // Redirect to Stripe checkout
+          window.location.href = data.url
+        } else {
+          alert('Unexpected response: ' + JSON.stringify(data))
+          setCheckoutLoading(false)
+        }
       } else {
         alert('Failed to create checkout: ' + data.error)
         setCheckoutLoading(false)

@@ -4,6 +4,7 @@ import { prisma } from '@/lib/db'
 import { getCurrentUser } from '@/lib/auth'
 import { logger } from '@/lib/logger'
 import { getCreditBalance } from '@/lib/credits'
+import { isEligibleForFreeFirstFile, isEmailEligibleForFreeFirstFile } from '@/lib/free-first-file'
 
 export const dynamic = 'force-dynamic'
 
@@ -83,9 +84,34 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Already paid' }, { status: 400 })
     }
 
+    // Check if user is eligible for free first file
+    const isFreeFirstFile = await isEligibleForFreeFirstFile(user.id)
+
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
 
-    // Create Stripe Checkout session
+    if (isFreeFirstFile) {
+      // Free first file - mark as paid directly without Stripe
+      await prisma.job.update({
+        where: { id: jobId },
+        data: {
+          paymentStatus: 'paid',
+          paidAt: new Date(),
+        },
+      })
+
+      logger.info('Free first file granted', {
+        jobId,
+        userId: user.id,
+        email: user.email,
+      })
+
+      return NextResponse.json({
+        free: true,
+        message: 'Free first file! Your job is now ready for download.',
+      })
+    }
+
+    // Create Stripe Checkout session for paid file
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
@@ -131,6 +157,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       sessionId: session.id,
       url: session.url,
+      free: false,
     })
   } catch (error) {
     logger.error('Checkout creation error', {

@@ -262,6 +262,44 @@ export default function Home() {
           </p>
         </div>
       </div>
+
+      {/* Structured Data for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'SoftwareApplication',
+            name: 'QuickSync',
+            applicationCategory: 'BusinessApplication',
+            operatingSystem: 'Web',
+            offers: {
+              '@type': 'Offer',
+              price: '9.00',
+              priceCurrency: 'USD',
+            },
+            aggregateRating: {
+              '@type': 'AggregateRating',
+              // Will add when we have reviews
+            },
+            description: 'Convert bank and credit card statement PDFs into clean CSV or QBO files for QuickBooks import.',
+            url: process.env.NEXT_PUBLIC_APP_URL || 'https://quicksync.app',
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Organization',
+            name: 'QuickSync',
+            url: process.env.NEXT_PUBLIC_APP_URL || 'https://quicksync.app',
+            logo: `${process.env.NEXT_PUBLIC_APP_URL || 'https://quicksync.app'}/logo.png`,
+            description: 'Bank statement to CSV/QBO converter for QuickBooks import',
+          }),
+        }}
+      />
     </main>
   )
 }

@@ -1,0 +1,13 @@
+# Allow all crawlers
+User-agent: *
+Allow: /
+Allow: /bookkeepers
+
+# Disallow API routes, admin routes, and private job pages
+Disallow: /api/
+Disallow: /jobs/
+Disallow: /auth/
+
+# Sitemap location
+Sitemap: https://quicksync.app/sitemap.xml
+
