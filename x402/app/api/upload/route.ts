@@ -4,6 +4,7 @@ import { saveFile } from '@/lib/storage'
 import { getCurrentUser } from '@/lib/auth'
 import { logger } from '@/lib/logger'
 import { nanoid } from 'nanoid'
+import * as Sentry from '@sentry/nextjs'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -77,6 +78,17 @@ export async function POST(request: NextRequest) {
       sessionId: sessionId || undefined, // Return sessionId for anonymous jobs
     })
   } catch (error) {
+    // Capture exception in Sentry
+    Sentry.captureException(error, {
+      tags: {
+        route: 'upload',
+        userId: user?.id || 'anonymous',
+      },
+      extra: {
+        sessionId,
+      },
+    })
+    
     logger.error('Upload error', {
       error: String(error),
       stack: error instanceof Error ? error.stack : undefined,
