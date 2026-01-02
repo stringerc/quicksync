@@ -31,12 +31,11 @@ export async function addWatermarkToPDF(
       const textWidth = font.widthOfTextAtSize(watermarkText, fontSize)
       const textHeight = fontSize
 
-      // Position text diagonally from bottom-left to top-right
-      const angle = -45 * (Math.PI / 180) // -45 degrees in radians
+      // Position text centered on page
       const centerX = width / 2
       const centerY = height / 2
 
-      // Draw watermark text
+      // Draw watermark text (centered)
       page.drawText(watermarkText, {
         x: centerX - textWidth / 2,
         y: centerY - textHeight / 2,
@@ -44,24 +43,32 @@ export async function addWatermarkToPDF(
         font: font,
         color: rgb(0.7, 0.7, 0.7), // Gray color
         opacity: opacity,
-        rotate: { angleInRadians: angle },
       })
 
-      // Add additional watermark layer for better coverage (optional)
-      // Repeat watermark pattern across the page
-      const repeatCount = 3
-      for (let i = 0; i < repeatCount; i++) {
-        const offsetY = (height / (repeatCount + 1)) * (i + 1) - centerY
-        page.drawText(watermarkText, {
-          x: centerX - textWidth / 2,
-          y: centerY + offsetY - textHeight / 2,
-          size: fontSize * 0.8,
-          font: font,
-          color: rgb(0.7, 0.7, 0.7),
-          opacity: opacity * 0.7, // Slightly lighter for repeated watermarks
-          rotate: { angleInRadians: angle },
-        })
-      }
+      // Add additional watermark text in corners for better coverage
+      const cornerOffset = Math.min(width, height) * 0.1
+      const cornerSize = fontSize * 0.6
+      const cornerTextWidth = font.widthOfTextAtSize(watermarkText, cornerSize)
+      
+      // Top-left corner
+      page.drawText(watermarkText, {
+        x: cornerOffset,
+        y: height - cornerOffset - cornerSize,
+        size: cornerSize,
+        font: font,
+        color: rgb(0.7, 0.7, 0.7),
+        opacity: opacity * 0.5,
+      })
+      
+      // Bottom-right corner
+      page.drawText(watermarkText, {
+        x: width - cornerOffset - cornerTextWidth,
+        y: cornerOffset,
+        size: cornerSize,
+        font: font,
+        color: rgb(0.7, 0.7, 0.7),
+        opacity: opacity * 0.5,
+      })
     }
 
     // Save and return as buffer
