@@ -65,7 +65,7 @@ export async function GET(
       hasPreview: !!previewFilePath,
     })
 
-    return new NextResponse(previewBuffer, {
+    return new NextResponse(previewBuffer as any, {
       headers: {
         'Content-Type': contentType,
         'Content-Disposition': `inline; filename="preview.${format === 'csv' ? 'html' : 'pdf'}"`,
