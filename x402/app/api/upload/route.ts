@@ -15,7 +15,15 @@ export async function POST(request: NextRequest) {
   try {
     // Try to get authenticated user (optional - allows anonymous uploads)
     const authHeader = request.headers.get('authorization')
-    user = await getCurrentUser(authHeader)
+    try {
+      user = await getCurrentUser(authHeader)
+    } catch (authError) {
+      // If auth fails, continue without user (anonymous upload)
+      logger.error('Auth error in upload (continuing as anonymous)', {
+        error: String(authError),
+      })
+      user = null
+    }
 
     // Parse form data
     const formData = await request.formData()
@@ -71,11 +79,15 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     logger.error('Upload error', {
       error: String(error),
+      stack: error instanceof Error ? error.stack : undefined,
       userId: user?.id,
       sessionId,
     })
     return NextResponse.json(
-      { error: 'Failed to upload file' },
+      { 
+        error: 'Failed to upload file',
+        details: process.env.NODE_ENV === 'development' ? String(error) : undefined,
+      },
       { status: 500 }
     )
   }
