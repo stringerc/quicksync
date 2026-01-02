@@ -25,7 +25,8 @@ model User {
 
 model Job {
   id                      String   @id @default(uuid())
-  userId                  String   @map("user_id")
+  userId                  String?  @map("user_id") // Nullable for anonymous jobs
+  sessionId               String?  @map("session_id") // Temporary session ID for anonymous jobs
   fileName                String   @map("file_name")
   filePath                String   @map("file_path")
   status                  String   @default("pending") // pending, processing, completed, failed, needs_review
@@ -50,8 +51,10 @@ model Job {
   // File paths for generated outputs
   csvFilePath             String?  @map("csv_file_path")
   qboFilePath             String?  @map("qbo_file_path")
+  previewCsvFilePath      String?  @map("preview_csv_file_path") // Watermarked preview
+  previewQboFilePath      String?  @map("preview_qbo_file_path") // Watermarked preview
 
-  user                    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                    User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("jobs")
 }
