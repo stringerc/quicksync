@@ -83,11 +83,11 @@ export default function Home() {
     <main className="min-h-screen bg-gray-50">
       {/* Hero Section */}
       <div className="bg-white border-b">
-        <div className="max-w-6xl mx-auto px-8 py-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">
             Turn bank/credit card PDFs into clean QuickBooks-ready files in minutes.
           </h1>
-          <p className="text-xl text-gray-600 mb-8">
+          <p className="text-lg sm:text-xl text-gray-600 mb-6 sm:mb-8">
             Upload a statement. Get a validated CSV or QBO you can import. No manual cleanup needed.
           </p>
 
@@ -98,7 +98,7 @@ export default function Home() {
 
           {/* Optional login section */}
           {!isAuthenticated && (
-            <div className="bg-gray-50 rounded-lg p-6 mb-12 max-w-2xl">
+            <div className="bg-gray-50 rounded-lg p-4 sm:p-6 mb-8 sm:mb-12 max-w-2xl">
               <h3 className="text-md font-semibold mb-2 text-gray-800">Already have an account?</h3>
               <p className="text-sm text-gray-600 mb-4">
                 Log in to track all your conversions and manage credits.
@@ -130,9 +130,9 @@ export default function Home() {
       </div>
 
       {/* What You Get */}
-      <div className="max-w-6xl mx-auto px-8 py-16">
-        <h2 className="text-3xl font-bold text-gray-900 mb-8">What you get</h2>
-        <div className="grid md:grid-cols-3 gap-6">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 sm:mb-8">What you get</h2>
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
           <div className="bg-white p-6 rounded-lg border">
             <h3 className="font-semibold text-lg mb-2">CSV + QBO files</h3>
             <p className="text-gray-600">Both formats included. Ready to import into QuickBooks or Excel.</p>
@@ -150,9 +150,9 @@ export default function Home() {
 
       {/* How It Works */}
       <div className="bg-white border-y">
-        <div className="max-w-6xl mx-auto px-8 py-16">
-          <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">How it works</h2>
-          <div className="grid md:grid-cols-3 gap-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-8 sm:mb-12 text-center">How it works</h2>
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
             <div className="text-center">
               <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-blue-600 font-bold text-xl">1</span>
@@ -179,8 +179,8 @@ export default function Home() {
       </div>
 
       {/* Supported Documents */}
-      <div className="max-w-6xl mx-auto px-8 py-16">
-        <h2 className="text-3xl font-bold text-gray-900 mb-8">Supported documents</h2>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 sm:mb-8">Supported documents</h2>
         <div className="bg-white p-6 rounded-lg border">
           <p className="text-gray-700 mb-4">
             We currently support text-based PDF statements from:
@@ -198,9 +198,9 @@ export default function Home() {
 
       {/* Pricing */}
       <div className="bg-gray-50 border-y">
-        <div className="max-w-6xl mx-auto px-8 py-16">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Pricing</h2>
-          <div className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 sm:mb-8 text-center">Pricing</h2>
+          <div className="grid sm:grid-cols-2 gap-6 sm:gap-8 max-w-3xl mx-auto">
             <div className="bg-white p-8 rounded-lg border-2">
               <h3 className="text-2xl font-bold mb-2">Single file</h3>
               <div className="text-4xl font-bold text-gray-900 mb-4">$9</div>
@@ -227,8 +227,8 @@ export default function Home() {
       </div>
 
       {/* FAQ */}
-      <div className="max-w-3xl mx-auto px-8 py-16">
-        <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Frequently asked questions</h2>
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 sm:mb-8 text-center">Frequently asked questions</h2>
         <div className="space-y-6">
           <div className="bg-white p-6 rounded-lg border">
             <h3 className="font-semibold text-lg mb-2">What file formats do you support?</h3>
@@ -255,7 +255,7 @@ export default function Home() {
 
       {/* Data Handling */}
       <div className="bg-gray-100 border-t">
-        <div className="max-w-3xl mx-auto px-8 py-8">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
           <p className="text-sm text-gray-600 text-center">
             <strong>Data handling:</strong> Files are stored privately and securely. Automatic deletion after 30 days. 
             We never sell or share your data. Payments processed securely via Stripe.

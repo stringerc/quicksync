@@ -85,8 +85,8 @@ export default function UploadForm({ token }: UploadFormProps) {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
-      <h2 className="text-xl font-semibold mb-4 text-gray-800">Upload PDF</h2>
+    <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 mb-6 sm:mb-8">
+      <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-gray-800">Upload PDF</h2>
       
       <div className="space-y-4">
         <div>

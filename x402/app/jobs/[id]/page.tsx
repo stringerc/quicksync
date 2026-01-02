@@ -26,6 +26,7 @@ interface Job {
   previewCsvFilePath?: string
   previewQboFilePath?: string
   creditBalance?: number
+  sampleRows?: string[][] // Sample CSV rows for preview
 }
 
 export default function JobPage() {
@@ -278,7 +279,7 @@ export default function JobPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen p-8 max-w-4xl mx-auto">
+      <main className="min-h-screen p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto">
         <div className="text-center">Loading...</div>
       </main>
     )
@@ -286,7 +287,7 @@ export default function JobPage() {
 
   if (!job) {
     return (
-      <main className="min-h-screen p-8 max-w-4xl mx-auto">
+      <main className="min-h-screen p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto">
         <div className="bg-white rounded-lg shadow-lg p-6">
           <div className="text-center text-red-600 mb-4">Job not found</div>
           <div className="flex items-center justify-center gap-2">
@@ -325,10 +326,10 @@ export default function JobPage() {
         ← Back to Home
       </button>
 
-      <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-        <h1 className="text-2xl font-bold mb-4 text-gray-800">{job.fileName}</h1>
+      <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 mb-4 sm:mb-6">
+        <h1 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-gray-800 break-words">{job.fileName}</h1>
 
-        <div className="grid grid-cols-2 gap-4 mb-6">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
           <div>
             <div className="text-sm text-gray-600">Status</div>
             <div className="font-semibold capitalize">{job.status}</div>
@@ -352,27 +353,29 @@ export default function JobPage() {
         {showEmailInput && !token && (
           <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
             <p className="text-blue-800 mb-2 font-semibold">Enter your email to continue</p>
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <input
                 type="email"
                 value={paymentEmail}
                 onChange={(e) => setPaymentEmail(e.target.value)}
                 placeholder="your@email.com"
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg"
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-base sm:text-sm"
               />
-              <button
-                onClick={handlePayment}
-                disabled={!paymentEmail || checkoutLoading}
-                className="bg-green-600 text-white py-2 px-6 rounded-lg hover:bg-green-700 disabled:bg-gray-400"
-              >
-                Continue
-              </button>
-              <button
-                onClick={() => setShowEmailInput(false)}
-                className="px-4 py-2 text-gray-600 hover:text-gray-800"
-              >
-                Cancel
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={handlePayment}
+                  disabled={!paymentEmail || checkoutLoading}
+                  className="flex-1 sm:flex-initial bg-green-600 text-white py-2 px-4 sm:px-6 rounded-lg hover:bg-green-700 disabled:bg-gray-400 text-sm sm:text-base"
+                >
+                  Continue
+                </button>
+                <button
+                  onClick={() => setShowEmailInput(false)}
+                  className="px-4 py-2 text-gray-600 hover:text-gray-800 text-sm sm:text-base"
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           </div>
         )}
@@ -405,11 +408,11 @@ export default function JobPage() {
             <p className="text-green-700 text-sm mb-4">
               Review your converted files with watermarks. Pay to download clean versions.
             </p>
-            <div className="flex gap-4">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               {job.previewCsvFilePath && (
                 <button
                   onClick={() => handlePreview('csv')}
-                  className="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700"
+                  className="bg-blue-600 text-white py-2.5 px-6 rounded-lg hover:bg-blue-700 text-sm sm:text-base"
                 >
                   Preview CSV
                 </button>
@@ -417,7 +420,7 @@ export default function JobPage() {
               {job.previewQboFilePath && (
                 <button
                   onClick={() => handlePreview('qbo')}
-                  className="bg-purple-600 text-white py-2 px-6 rounded-lg hover:bg-purple-700"
+                  className="bg-purple-600 text-white py-2.5 px-6 rounded-lg hover:bg-purple-700 text-sm sm:text-base"
                 >
                   Preview QBO
                 </button>
@@ -517,7 +520,7 @@ export default function JobPage() {
                 </div>
               )}
 
-              <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4 text-sm">
                 <div>
                   <div className="text-gray-600">Rows Extracted</div>
                   <div className="font-semibold">{job.rowCount || 0}</div>
@@ -533,7 +536,7 @@ export default function JobPage() {
               </div>
 
               {job.totalDebit && job.totalCredit && (
-                <div className="grid grid-cols-3 gap-4 mb-4 text-sm">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 mb-4 text-sm">
                   <div>
                     <div className="text-gray-600">Total Debit</div>
                     <div className="font-semibold">${job.totalDebit}</div>
@@ -551,22 +554,62 @@ export default function JobPage() {
                 </div>
               )}
 
+              {/* Sample CSV rows preview */}
+              {job.sampleRows && job.sampleRows.length > 0 && (
+                <div className="mt-4">
+                  <h4 className="text-sm font-semibold text-gray-700 mb-2">Sample Output (First {job.sampleRows.length - 1} rows):</h4>
+                  <div className="overflow-x-auto border border-gray-200 rounded-lg -mx-2 sm:mx-0">
+                    <table className="min-w-full divide-y divide-gray-200 text-xs sm:text-sm">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          {job.sampleRows[0]?.map((header, idx) => (
+                            <th
+                              key={idx}
+                              className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider"
+                            >
+                              {header}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        {job.sampleRows.slice(1).map((row, rowIdx) => (
+                          <tr key={rowIdx} className={rowIdx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                            {row.map((cell, cellIdx) => (
+                              <td
+                                key={cellIdx}
+                                className="px-3 py-2 text-xs text-gray-900 whitespace-nowrap"
+                              >
+                                {cell || '-'}
+                              </td>
+                            ))}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2">
+                    Preview shows first {job.sampleRows.length - 1} transaction rows. Click &quot;Preview CSV&quot; to see full file with watermark.
+                  </p>
+                </div>
+              )}
+
               {/* Download buttons (only if paid or has credits) */}
               {canDownload && (
-                <div className="flex gap-4">
-                  <button
-                    onClick={() => handleDownload('csv')}
-                    className="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700"
-                  >
-                    Download CSV
-                  </button>
-                  <button
-                    onClick={() => handleDownload('qbo')}
-                    className="bg-purple-600 text-white py-2 px-6 rounded-lg hover:bg-purple-700"
-                  >
-                    Download QBO
-                  </button>
-                </div>
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+              <button
+                onClick={() => handleDownload('csv')}
+                className="bg-blue-600 text-white py-2.5 px-6 rounded-lg hover:bg-blue-700 text-sm sm:text-base"
+              >
+                Download CSV
+              </button>
+              <button
+                onClick={() => handleDownload('qbo')}
+                className="bg-purple-600 text-white py-2.5 px-6 rounded-lg hover:bg-purple-700 text-sm sm:text-base"
+              >
+                Download QBO
+              </button>
+            </div>
               )}
             </div>
           </div>

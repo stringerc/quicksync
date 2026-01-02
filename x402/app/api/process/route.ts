@@ -174,6 +174,31 @@ export async function POST(request: NextRequest) {
         confidenceScore: parseResult.confidenceScore,
       })
 
+      // Send file ready email (if user email available)
+      try {
+        if (job.userId) {
+          const user = await prisma.user.findUnique({
+            where: { id: job.userId },
+          })
+          if (user?.email) {
+            const { sendFileReadyEmail } = await import('@/lib/email')
+            await sendFileReadyEmail(
+              user.email,
+              jobId,
+              job.fileName,
+              parseResult.transactions.length,
+              parseResult.confidenceScore
+            )
+          }
+        }
+      } catch (emailError) {
+        // Don't fail the request if email fails
+        logger.error('Failed to send file ready email', {
+          jobId,
+          error: String(emailError),
+        })
+      }
+
       return NextResponse.json({
         success: true,
         status,

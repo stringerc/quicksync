@@ -38,6 +38,21 @@ export async function GET(request: NextRequest) {
     // Generate auth token
     const authToken = generateAuthToken(user.id, user.email)
 
+    // Check if this is a new user (created less than 1 minute ago) and send welcome email
+    try {
+      const isNewUser = user.createdAt && (Date.now() - user.createdAt.getTime() < 60000) // Created < 1 min ago
+      if (isNewUser) {
+        const { sendWelcomeEmail } = await import('@/lib/email')
+        await sendWelcomeEmail(user.email).catch((err) => {
+          // Don't fail auth if email fails
+          console.error('Failed to send welcome email:', err)
+        })
+      }
+    } catch (emailError) {
+      // Don't fail auth if email fails
+      console.error('Welcome email error:', emailError)
+    }
+
     // Redirect to home with token (in production, set as HTTP-only cookie)
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
     const response = NextResponse.redirect(`${appUrl}/?token=${authToken}`)

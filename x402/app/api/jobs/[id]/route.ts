@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { getCurrentUser } from '@/lib/auth'
 import { getCreditBalance } from '@/lib/credits'
+import { readFile } from '@/lib/storage'
+import { getSampleRowsFromCSV } from '@/lib/csv-sample'
 
 export const dynamic = 'force-dynamic'
 
@@ -32,6 +34,19 @@ export async function GET(
     // Get credit balance if user is logged in
     const creditBalance = user ? await getCreditBalance(user.id) : 0
 
+    // Get sample rows from CSV if available
+    let sampleRows: string[][] = []
+    if (job.csvFilePath && job.status === 'completed') {
+      try {
+        const csvBuffer = await readFile(job.csvFilePath)
+        const csvContent = csvBuffer.toString('utf-8')
+        sampleRows = getSampleRowsFromCSV(csvContent, 5) // Get first 5 rows (including header)
+      } catch (error) {
+        // If we can't read the CSV, just continue without sample rows
+        console.error('Failed to read CSV for sample rows:', error)
+      }
+    }
+
     return NextResponse.json({
       id: job.id,
       fileName: job.fileName,
@@ -54,6 +69,7 @@ export async function GET(
       previewCsvFilePath: job.previewCsvFilePath, // Add preview paths
       previewQboFilePath: job.previewQboFilePath,
       creditBalance,
+      sampleRows, // Add sample rows
     })
   } catch (error) {
     console.error('Get job error:', error)
