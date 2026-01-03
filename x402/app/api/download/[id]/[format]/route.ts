@@ -4,7 +4,6 @@ import { readFile } from '@/lib/storage'
 import { getCurrentUser } from '@/lib/auth'
 import { logger } from '@/lib/logger'
 import { getCreditBalance, redeemCredit } from '@/lib/credits'
-import * as Sentry from '@sentry/nextjs'
 
 export async function GET(
   request: NextRequest,
@@ -112,16 +111,6 @@ export async function GET(
       },
     })
   } catch (error) {
-    // Capture exception in Sentry
-    Sentry.captureException(error, {
-      tags: {
-        route: 'download',
-        jobId: id,
-        format,
-        userId: user?.id,
-      },
-    })
-    
     logger.error('Download error', {
       jobId: id,
       format,

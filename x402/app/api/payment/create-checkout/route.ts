@@ -5,7 +5,6 @@ import { getCurrentUser } from '@/lib/auth'
 import { logger } from '@/lib/logger'
 import { getCreditBalance } from '@/lib/credits'
 import { isEligibleForFreeFirstFile, isEmailEligibleForFreeFirstFile } from '@/lib/free-first-file'
-import * as Sentry from '@sentry/nextjs'
 
 export const dynamic = 'force-dynamic'
 
@@ -161,15 +160,6 @@ export async function POST(request: NextRequest) {
       free: false,
     })
   } catch (error) {
-    // Capture exception in Sentry
-    Sentry.captureException(error, {
-      tags: {
-        route: 'create-checkout',
-        userId: user?.id,
-        jobId,
-      },
-    })
-    
     logger.error('Checkout creation error', {
       error: String(error),
       userId: user?.id,

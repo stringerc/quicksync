@@ -9,7 +9,6 @@ import path from 'path'
 import { promises as fs } from 'fs'
 import { getCurrentUser } from '@/lib/auth'
 import { logger } from '@/lib/logger'
-import * as Sentry from '@sentry/nextjs'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -207,15 +206,6 @@ export async function POST(request: NextRequest) {
         confidenceScore: parseResult.confidenceScore,
       })
     } catch (error) {
-      // Capture exception in Sentry
-      Sentry.captureException(error, {
-        tags: {
-          route: 'process',
-          jobId,
-          userId: user?.id || 'anonymous',
-        },
-      })
-      
       logger.error('Processing error', {
         jobId,
         error: String(error),
@@ -232,14 +222,6 @@ export async function POST(request: NextRequest) {
       )
     }
   } catch (error) {
-    // Capture exception in Sentry
-    Sentry.captureException(error, {
-      tags: {
-        route: 'process',
-        userId: user?.id,
-      },
-    })
-    
     logger.error('Process route error', {
       error: String(error),
       userId: user?.id,

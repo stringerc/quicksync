@@ -4,7 +4,6 @@ import { prisma } from '@/lib/db'
 import Stripe from 'stripe'
 import { logger } from '@/lib/logger'
 import { addCredits } from '@/lib/credits'
-import * as Sentry from '@sentry/nextjs'
 
 export const runtime = 'nodejs'
 
@@ -111,14 +110,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ received: true })
   } catch (error) {
-    // Capture exception in Sentry
-    Sentry.captureException(error, {
-      tags: {
-        route: 'webhook',
-        eventType: event?.type,
-      },
-    })
-    
     logger.error('Webhook handler error', {
       error: String(error),
       eventType: event?.type,
