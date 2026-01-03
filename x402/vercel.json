@@ -1,13 +1,9 @@
 {
-  "buildCommand": "npm run build",
-  "devCommand": "npm run dev",
-  "installCommand": "npm install",
-  "framework": "nextjs",
-  "regions": ["iad1"],
-  "functions": {
-    "app/api/**/*.ts": {
-      "maxDuration": 30
+  "crons": [
+    {
+      "path": "/api/cron/abandoned-cart",
+      "schedule": "0 10 * * *"
     }
-  }
+  ]
 }
 
