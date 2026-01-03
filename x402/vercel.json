@@ -1,4 +1,8 @@
 {
+  "buildCommand": "cd x402 && npm install && npm run build",
+  "outputDirectory": "x402/.next",
+  "installCommand": "cd x402 && npm install",
+  "framework": null,
   "crons": [
     {
       "path": "/api/cron/abandoned-cart",
@@ -6,4 +10,3 @@
     }
   ]
 }
-
