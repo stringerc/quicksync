@@ -1,8 +1,4 @@
 {
-  "buildCommand": "npm install && npm run build",
-  "installCommand": "npm install",
-  "framework": "nextjs",
-  "rootDirectory": "x402",
   "crons": [
     {
       "path": "/api/cron/abandoned-cart",
