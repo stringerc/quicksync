@@ -1,0 +1,4 @@
+
+# Test commit to verify Vercel deployment routing
+# This should deploy to quicksync project only
+
