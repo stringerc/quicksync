@@ -97,14 +97,10 @@ export default function Home() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 lg:py-32">
           <div className="text-center animate-fade-in-up">
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
-              Turn PDFs into
-              <span className="block mt-2 bg-gradient-to-r from-yellow-200 to-pink-200 bg-clip-text text-transparent">
-                QuickBooks-ready files
-              </span>
+              Turn bank/credit card PDFs into clean QuickBooks-ready files in minutes.
             </h1>
             <p className="text-xl sm:text-2xl text-purple-100 mb-8 max-w-3xl mx-auto">
-              Upload your bank or credit card statement. Get clean CSV or QBO files in minutes.
-              <span className="block mt-2 text-lg text-purple-200">Preview before you pay. No cleanup needed.</span>
+              Upload a statement. Get a validated CSV or QBO you can import. No manual cleanup needed.
             </p>
 
             {/* Upload CTA */}
@@ -139,16 +135,62 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Features Section */}
+      {/* What you get Section */}
+      <div className="py-16 sm:py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+              What you get
+            </h2>
+          </div>
+
+          <div className="grid sm:grid-cols-3 gap-8">
+            <div className="bg-gray-50 p-8 rounded-2xl text-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-blue-500 rounded-xl flex items-center justify-center mx-auto mb-6">
+                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">CSV + QBO files</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Both formats included. Ready to import into QuickBooks or Excel.
+              </p>
+            </div>
+
+            <div className="bg-gray-50 p-8 rounded-2xl text-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center mx-auto mb-6">
+                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Validation summary</h3>
+              <p className="text-gray-600 leading-relaxed">
+                See row count, date range, totals, and confidence score before downloading.
+              </p>
+            </div>
+
+            <div className="bg-gray-50 p-8 rounded-2xl text-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center mx-auto mb-6">
+                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Pay only when ready</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Preview your results first. Only pay when you're ready to download.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* How it works Section */}
       <div className="py-16 sm:py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-              Everything you need
+              How it works
             </h2>
-            <p className="text-xl text-gray-600">
-              Professional-grade conversion in three simple steps
-            </p>
           </div>
 
           <div className="grid sm:grid-cols-3 gap-8">
@@ -160,7 +202,7 @@ export default function Home() {
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-3">1. Upload PDF</h3>
               <p className="text-gray-600 leading-relaxed">
-                Drag and drop or select your bank or credit card statement PDF.
+                Upload your bank or credit card statement PDF.
               </p>
             </div>
 
@@ -171,9 +213,9 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">2. Preview results</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">2. Preview summary</h3>
               <p className="text-gray-600 leading-relaxed">
-                Review extracted data, validation summary, and confidence score before paying.
+                Review the extracted data, confidence score, and validation summary.
               </p>
             </div>
 
@@ -183,25 +225,72 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">3. Download files</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">3. Pay & download</h3>
               <p className="text-gray-600 leading-relaxed">
-                Get both CSV and QBO formats. Ready to import into QuickBooks or Excel.
+                If the results look good, pay and download your CSV or QBO file.
               </p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Pricing Section */}
+      {/* Supported documents Section */}
       <div className="py-16 sm:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-              Simple, transparent pricing
+              Supported documents
             </h2>
             <p className="text-xl text-gray-600">
-              Pay per file, or save with a credit pack
+              We currently support text-based PDF statements from:
             </p>
+          </div>
+
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-gray-50 rounded-2xl p-8">
+              <ul className="space-y-4 text-gray-700">
+                <li className="flex items-start">
+                  <svg className="w-6 h-6 text-green-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <div>
+                    <strong className="text-gray-900">Bank statements</strong> (Chase, Bank of America, Wells Fargo, etc.)
+                  </div>
+                </li>
+                <li className="flex items-start">
+                  <svg className="w-6 h-6 text-green-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <div>
+                    <strong className="text-gray-900">Credit card statements</strong> (Visa, Mastercard, Amex, etc.)
+                  </div>
+                </li>
+                <li className="flex items-start">
+                  <svg className="w-6 h-6 text-green-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <div>
+                    <strong className="text-gray-900">Payout reports</strong> from payment processors
+                  </div>
+                </li>
+              </ul>
+              <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <p className="text-sm text-yellow-800">
+                  <strong>Note:</strong> Scanned PDFs or images are not currently supported. The PDF must contain selectable text.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Pricing Section */}
+      <div className="py-16 sm:py-24 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+              Pricing
+            </h2>
           </div>
 
           <div className="grid sm:grid-cols-2 gap-8 max-w-4xl mx-auto">
@@ -209,14 +298,14 @@ export default function Home() {
               <h3 className="text-2xl font-bold text-gray-900 mb-2">Single file</h3>
               <div className="mb-4">
                 <span className="text-5xl font-bold text-gray-900">$9</span>
-                <span className="text-gray-600 ml-2">per conversion</span>
+                <span className="text-gray-600 ml-2">Per conversion</span>
               </div>
               <ul className="space-y-3 mb-8">
                 <li className="flex items-center text-gray-700">
                   <svg className="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
-                  CSV + QBO files included
+                  CSV + QBO files
                 </li>
                 <li className="flex items-center text-gray-700">
                   <svg className="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
@@ -242,7 +331,7 @@ export default function Home() {
               <h3 className="text-2xl font-bold mb-2">Pack of 10</h3>
               <div className="mb-4">
                 <span className="text-5xl font-bold">$29</span>
-                <span className="text-purple-100 ml-2">save $61</span>
+                <span className="text-purple-100 ml-2">Save $61</span>
               </div>
               <ul className="space-y-3 mb-8">
                 <li className="flex items-center">
@@ -264,43 +353,6 @@ export default function Home() {
                   Best value
                 </li>
               </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Benefits Section */}
-      <div className="py-16 sm:py-24 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid sm:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full mb-4">
-                <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Secure & Private</h3>
-              <p className="text-gray-600">Your files are encrypted and automatically deleted after 30 days.</p>
-            </div>
-
-            <div className="text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
-                <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Fast Processing</h3>
-              <p className="text-gray-600">Get your files in minutes, not hours. No waiting around.</p>
-            </div>
-
-            <div className="text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-indigo-100 rounded-full mb-4">
-                <svg className="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Accuracy Guaranteed</h3>
-              <p className="text-gray-600">Confidence scoring and validation ensure high-quality results.</p>
             </div>
           </div>
         </div>
