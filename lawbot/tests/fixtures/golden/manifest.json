@@ -1,0 +1,71 @@
+{
+  "description": "Redacted synthetic drafts for regression — not real filings. CI asserts weighted score_percent and all_passed.",
+  "cases": [
+    {
+      "id": "clean_short",
+      "answer_file": "clean_short.txt",
+      "user_file": "user_short.txt",
+      "citation_audit": false,
+      "min_weighted_score": 95,
+      "expect_all_pass": true
+    },
+    {
+      "id": "clean_memo_structured",
+      "answer_file": "clean_memo_structured.txt",
+      "user_file": "user_memo.txt",
+      "citation_audit": false,
+      "min_weighted_score": 90,
+      "expect_all_pass": true
+    },
+    {
+      "id": "bad_tbd_placeholder",
+      "answer_file": "bad_tbd.txt",
+      "user_file": "user_motion.txt",
+      "citation_audit": false,
+      "expect_all_pass": false,
+      "max_weighted_score": 68
+    },
+    {
+      "id": "bad_internal_leak",
+      "answer_file": "bad_internal_leak.txt",
+      "user_file": "user_short.txt",
+      "citation_audit": false,
+      "expect_all_pass": false,
+      "max_weighted_score": 82
+    },
+    {
+      "id": "bad_long_no_structure",
+      "answer_file": "bad_long_no_structure.txt",
+      "user_file": "user_long_motion.txt",
+      "citation_audit": false,
+      "expect_all_pass": false,
+      "max_weighted_score": 96
+    },
+    {
+      "id": "audit_style_bold_headers",
+      "answer_file": "audit_bold_headers.txt",
+      "user_file": "user_long_motion.txt",
+      "citation_audit": true,
+      "min_weighted_score": 85,
+      "expect_all_pass": true
+    },
+    {
+      "id": "vault_bad_quote_id",
+      "answer_file": "vault_bad_quote.txt",
+      "user_file": "user_short.txt",
+      "citation_audit": false,
+      "vault_chunk_ids": ["chk_aaaaaaaaaaaaaaaa"],
+      "expect_all_pass": false,
+      "max_weighted_score": 82
+    },
+    {
+      "id": "vault_good_quote_id",
+      "answer_file": "vault_good_quote.txt",
+      "user_file": "user_short.txt",
+      "citation_audit": false,
+      "vault_chunk_ids": ["chk_aaaaaaaaaaaaaaaa"],
+      "min_weighted_score": 90,
+      "expect_all_pass": true
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "id": "placeholder-chunk-id-fail",
+  "tags": ["regression"],
+  "holdout": false,
+  "expected": { "hermes_passed": false },
+  "response": {
+    "answer": "See quote <quote chunk=\"chk_XXXXX\">text</quote> for support.",
+    "verification_ok": true,
+    "verification_errors": [],
+    "vault_empty": false,
+    "session_id": "golden-session",
+    "audit": { "vault_chunk_ids": ["chk_real123"], "task_regime": "citation_audit" }
+  }
+}

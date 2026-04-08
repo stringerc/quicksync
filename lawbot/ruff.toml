@@ -1,0 +1,9 @@
+target-version = "py311"
+line-length = 120
+
+[lint]
+# Pyflakes + pycodestyle (non-whitespace). Omit isort/pyupgrade so prompt-heavy files stay stable.
+select = ["E", "F"]
+ignore = [
+  "E501", # line length — long strings in SYSTEM_PROMPT / directives
+]

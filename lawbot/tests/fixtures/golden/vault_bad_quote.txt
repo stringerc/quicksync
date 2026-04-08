@@ -1,0 +1,1 @@
+Here is the holding: <quote chunk="chk_not_in_vault">The court held for the defendant.</quote> That supports our position.

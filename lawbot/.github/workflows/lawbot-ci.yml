@@ -1,0 +1,42 @@
+name: Lawbot CI
+
+on:
+  push:
+    paths:
+      - "lawbot/**"
+      - "tests/**"
+      - "scripts/**"
+      - ".github/workflows/lawbot-ci.yml"
+      - ".pre-commit-config.yaml"
+  pull_request:
+    paths:
+      - "lawbot/**"
+      - "tests/**"
+      - "scripts/**"
+      - ".github/workflows/lawbot-ci.yml"
+      - ".pre-commit-config.yaml"
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          pip install -q -r requirements.txt
+          pip install -q -r requirements-dev.txt || true
+          pip install -q "ruff==0.15.9" "bandit==1.9.4"
+      - name: Lint and security scan
+        run: bash scripts/security_scan.sh
+      - name: Draft quality + golden fixtures
+        run: bash scripts/ci_quality.sh
+      - name: Upload golden draft-quality JSONL
+        uses: actions/upload-artifact@v4
+        with:
+          name: draft-quality-golden
+          path: draft-quality-golden.jsonl
+      - name: Full unit tests
+        run: python -m unittest discover -s tests -p 'test_*.py' -q

@@ -1,0 +1,8 @@
+# Optional: UI screenshot automation (scripts/capture_ui_screenshots.py)
+playwright>=1.49.0
+
+# Lint (CI and local: `ruff check lawbot tests`; pinned to match .pre-commit-config.yaml)
+ruff==0.15.9
+
+# Security static analysis on lawbot/ (`bash scripts/security_scan.sh`)
+bandit==1.9.4

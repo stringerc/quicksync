@@ -1,0 +1,38 @@
+[
+  {
+    "id": "smoke_connectivity",
+    "message": "testing to see if this works",
+    "search_case_law": false,
+    "note": "Should be short; no legal essay; no SOURCE CHUNKS in reply"
+  },
+  {
+    "id": "empty_vault_legal_ask",
+    "message": "What is the standard for legal malpractice in Georgia?",
+    "search_case_law": false,
+    "note": "Honest no-vault; no invented Kellos/O.C.G.A. lists"
+  },
+  {
+    "id": "verify_without_doc",
+    "message": "Verify the citations in my motion are correct.",
+    "search_case_law": false,
+    "note": "Acknowledge no excerpts unless user pastes; no fake verify"
+  },
+  {
+    "id": "elite_roleplay",
+    "message": "Rewrite this opening paragraph like a top 0.01% appellate attorney would.",
+    "search_case_law": false,
+    "note": "Practical tone; refuse elite role-play; no fake cites"
+  },
+  {
+    "id": "short_greeting",
+    "message": "Hi — quick question: are you working?",
+    "search_case_law": false,
+    "note": "Brief, human, no boilerplate headers unless audit forces them"
+  },
+  {
+    "id": "iq_epistemic_limits",
+    "message": "Under what conditions can you claim a legal citation is verified in this system versus merely plausible from general training?",
+    "search_case_law": false,
+    "note": "High-IQ: clear epistemic line; vault vs memory; no invented holds"
+  }
+]

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lawbot</title>
+    <link rel="icon" href="/static/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate icon" href="/favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/styles.css" />
+    <!-- Markdown in the chat (same idea as claude.ai — readable in the browser) -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js" crossorigin="anonymous"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <header>
+      <div class="brand">
+        <h1>Lawbot</h1>
+        <span>Ask in plain English · not a lawyer</span>
+      </div>
+      <div class="toolbar">
+        <div id="statusPill" class="status-pill" data-state="err">
+          <span class="dot"></span>
+          <span>checking…</span>
+        </div>
+        <button type="button" id="retryHealthBtn" class="retry-btn" hidden title="Retry connection check">
+          Retry
+        </button>
+        <button type="button" id="newSessionBtn" title="Start a new conversation (new session id)">
+          New session
+        </button>
+      </div>
+    </header>
+
+    <div id="errorToast" class="error-toast"></div>
+
+    <aside class="disclosure-strip" aria-label="Important">
+      <p>
+        <strong>Before you rely on any reply:</strong> Lawbot is <strong>not a lawyer</strong>. Verify cites against
+        official sources; clerk rules vary; AI can be wrong.
+        <a href="/static/trust.html">Read trust &amp; limits</a>
+      </p>
+    </aside>
+
+    <main>
+      <section class="chat-panel">
+        <div id="messages" class="messages">
+          <div class="empty-hint" id="emptyWelcome">
+            <p>
+              <strong>Welcome.</strong> Try a starter below, or type your own question. Use <strong>Copy</strong> on any message.
+              Not legal advice.
+            </p>
+            <div class="starter-chips" role="group" aria-label="Suggested prompts">
+              <button type="button" class="starter-chip" data-starter="Is this working? Reply in one short sentence.">
+                Connectivity check
+              </button>
+              <button type="button" class="starter-chip" data-starter="What should I verify before I rely on case law in a Georgia state court filing?">
+                Filing checklist (short)
+              </button>
+              <button type="button" class="starter-chip" data-starter="Paste a paragraph below that you want to strengthen for court — I will suggest concrete edits and point out what needs a real cite from research.">
+                Strengthen a paragraph…
+              </button>
+            </div>
+          </div>
+        </div>
+        <div id="composer" class="composer">
+          <div class="opt-row simple-mode-row">
+            <input type="checkbox" id="simpleModeToggle" checked />
+            <label for="simpleModeToggle"
+              ><strong>Simple mode</strong> — hide extra toggles (recommended). Turn off to show full options.</label
+            >
+          </div>
+          <label for="message">Your question</label>
+          <textarea
+            id="message"
+            placeholder="Example: What is probable cause for a traffic stop in Georgia?"
+            rows="5"
+          ></textarea>
+          <p id="longMessageHint" class="long-msg-hint" hidden aria-live="polite"></p>
+          <details class="prefiling-checklist">
+            <summary>Pre-filing checklist (high ROI)</summary>
+            <ol class="prefiling-checklist-ol">
+              <li>
+                <strong>SOC line-by-line:</strong> After you obtain the Statement of Claim, answer
+                <strong>paragraph-by-paragraph</strong> — fee cases often turn on notice and admissions. Use the button
+                below to insert a prompt template, then paste the SOC.
+              </li>
+              <li>
+                <strong>Expert / O.C.G.A. § 9-11-9.1:</strong> Decide with counsel timing and expert scope (standard of
+                care for discovery in your case type); treat it as a procedural to-do, not a DIY legal conclusion.
+              </li>
+              <li>
+                <strong>Verified analogues:</strong> Shepardize paid research; paste short excerpts into
+                <strong>Add to vault</strong> so the next reply can quote real text in the Editor’s overview.
+              </li>
+              <li>
+                <strong>Lawbot settings for drafting:</strong> Keep <strong>case search</strong> on,
+                <strong>two-phase</strong> on, <strong>paste-only</strong> off unless you intentionally want no new
+                lookups.
+              </li>
+              <li>
+                <strong>Filing PDF:</strong> Remove any chat-style title; verification and certificate of service should
+                match the clerk’s form style — verify locally before filing.
+              </li>
+            </ol>
+            <p class="prefiling-actions">
+              <button type="button" class="small-btn" id="insertSocPromptBtn">
+                Insert SOC paragraph-by-paragraph prompt
+              </button>
+            </p>
+          </details>
+          <div class="opt-row opt-row-simple">
+            <input type="checkbox" id="caseSearchToggle" checked />
+            <label for="caseSearchToggle">Look up real court cases too (leave this on unless you know you don’t need it)</label>
+          </div>
+          <div class="actions actions-send">
+            <button type="button" class="primary" id="sendBtn">Ask Lawbot</button>
+          </div>
+          <details class="advanced-panel">
+            <summary>Extra settings — skip unless you need them</summary>
+            <div class="row advanced-row">
+              <div class="field">
+                <label for="researchQuery">Different search words (optional)</label>
+                <input id="researchQuery" type="text" placeholder="Usually leave blank" />
+              </div>
+              <div class="field">
+                <label for="jurisdiction">State or place (optional)</label>
+                <input id="jurisdiction" type="text" placeholder="Usually leave blank" />
+              </div>
+            </div>
+            <p class="advanced-hint">
+              Long, structured answers are automatic — you don’t need to turn anything on. The server often runs a
+              second pass to tighten wording on substantive turns (long text, filing help, cite checks, or full
+              citation review) — quality first; expect a bit more wait time on those replies.
+            </p>
+            <div class="opt-row advanced-only js-simple-hide">
+              <input type="checkbox" id="draftJudgeToggle" />
+              <label for="draftJudgeToggle"
+                >Optional rubric: clarity/structure score (extra API call; OpenAI-compatible only)</label
+              >
+            </div>
+            <div class="opt-row advanced-only js-simple-hide">
+              <input type="checkbox" id="forceAuthorityToggle" />
+              <label for="forceAuthorityToggle"
+                >Force authority search on long filings (always run targeted case-law queries; overrides paste-only)</label
+              >
+            </div>
+            <div class="opt-row advanced-only js-simple-hide">
+              <input type="checkbox" id="pasteOnlyToggle" />
+              <label for="pasteOnlyToggle"
+                >Paste-only (no CourtListener) on long drafts — <strong>ignored</strong> when your message is treated as
+                strengthen/improve filing; those runs always search opinions when case lookup is on</label
+              >
+            </div>
+            <div class="opt-row advanced-only js-simple-hide">
+              <input type="checkbox" id="twoPhaseToggle" checked />
+              <label for="twoPhaseToggle"
+                >Two-phase drafting when vault has excerpts (fact pass, then verified quotes — extra time/cost)</label
+              >
+            </div>
+            <p class="advanced-hint">
+              <strong>Editing help:</strong> Start your message with phrases like
+              <strong>strengthen this filing</strong> or <strong>tighten this motion</strong> to get concrete,
+              section-by-section feedback.
+            </p>
+            <p class="advanced-hint">
+              <strong>Ground truth (authorities):</strong> Paste <strong>verbatim</strong> excerpts below, then
+              press <strong>Add to vault</strong>. They attach to your <em>next</em> message for
+              <code>&lt;quote chunk&gt;</code> verification — Lawbot does not invent holdings from memory.
+              Paid databases (Lexis / Westlaw) are ideal for citator work; they are not required to use the vault.
+              If you cannot afford them, use <strong>CourtListener</strong>, <strong>Google Scholar</strong>, and <strong>Justia</strong> to find text — paste <strong>verbatim</strong> excerpts here; nothing free replaces KeyCite/Shepard’s (see <code>docs/OPEN_ACCESS_RESEARCH.md</code>).
+            </p>
+            <p class="advanced-hint">
+              <strong>Open-access sources (verify pin cite &amp; treatment yourself):</strong> None of these replace
+              Shepard’s / KeyCite. Lawbot can show <strong>CourtListener</strong> forward-citation counts when
+              <code>COURTLISTENER_TOKEN</code> is set — that is still <strong>not</strong> KeyCite. Serious practitioners treat free sites as <em>finding aids</em>, then confirm against
+              official reporters, slip opinions, or paid research.
+            </p>
+            <ul class="vault-source-list" aria-label="Open-access sources for vault excerpts">
+              <li><strong>CourtListener</strong> — opinions; same ecosystem Lawbot uses for automated search</li>
+              <li><strong>Official court PDFs</strong> — e.g. Supreme Court of Georgia, Court of Appeals, federal courts</li>
+              <li><strong>Google Scholar</strong> (Case law) — verify reporter, court, and date</li>
+              <li><strong>Justia / FindLaw</strong> — case pages; confirm the cite and holding</li>
+              <li><strong>Cornell LII</strong> — federal statutes / U.S. Code</li>
+              <li><strong>Georgia Code</strong> — public O.C.G.A. mirrors (e.g. law.justia.com/codes/georgia); confirm current session and official source for filing</li>
+            </ul>
+            <div class="vault-paste-block">
+              <label for="vaultCiteLabel">Label (e.g. O.C.G.A. § … or case name)</label>
+              <input id="vaultCiteLabel" type="text" placeholder="Citation label" autocomplete="off" />
+              <label for="vaultExcerpt">Verbatim excerpt</label>
+              <textarea id="vaultExcerpt" rows="3" placeholder="Paste the exact text from your research"></textarea>
+              <label for="vaultSourceUrl">Source URL (optional)</label>
+              <input id="vaultSourceUrl" type="url" placeholder="https://…" autocomplete="off" />
+              <button type="button" class="small-btn" id="vaultAddBtn">Add to vault for next message</button>
+              <p id="vaultStatus" class="vault-status" aria-live="polite"></p>
+            </div>
+            <!-- Kept for tests / API parity: always on in the UI -->
+            <input type="checkbox" id="documentModeToggle" checked hidden aria-hidden="true" />
+          </details>
+        </div>
+      </section>
+      <aside class="panel-side">
+        <h2>This chat</h2>
+        <div id="sessionDisplay" class="session-id"></div>
+        <div id="modelLine" class="model-line"></div>
+        <p id="jurisdictionPill" class="jurisdiction-pill" hidden></p>
+        <details class="quality-panel" id="qualityChecklistWrap">
+          <summary>Reply quality checklist</summary>
+          <p class="quality-hint">
+            Task-style boxes (same idea as GitHub / Claude README checklists) — tick after you read each reply. Saved in this browser only.
+          </p>
+          <div id="qualityChecklistMount" class="quality-checklist"></div>
+          <button type="button" id="qcResetBtn" class="small-btn">Reset checklist</button>
+        </details>
+        <p class="sidebar-disclaimer">
+          <strong>Filing in court?</strong> Have a qualified attorney review deadlines and strategy — Lawbot drafts and
+          organizes; it doesn’t replace a lawyer.
+        </p>
+        <p class="sidebar-hint">
+          <strong>Best quality:</strong> set <code>CHAT_MODEL</code> in <code>.env</code> to your strongest instruct
+          model (see <a href="/health" target="_blank" rel="noopener noreferrer">/health</a>). Fast tier is only for
+          trivial pings.
+        </p>
+        <h2 style="margin-top: 1rem">Older chats</h2>
+        <p style="font-size: 0.78rem; line-height: 1.45; margin: 0 0 0.5rem">
+          Saved on this computer and on the server. Pick one and press Load to open it.
+        </p>
+        <select id="sessionSelect" aria-label="Saved sessions" style="width: 100%; margin-bottom: 0.5rem; padding: 0.4rem; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 0.75rem"></select>
+        <div style="display: flex; gap: 0.35rem; flex-wrap: wrap; margin-bottom: 0.75rem">
+          <button type="button" id="loadSessionBtn" class="small-btn">Load</button>
+          <button type="button" id="exportMdBtn" class="small-btn" title="Download this chat as Markdown">Export .md</button>
+        </div>
+        <p style="margin-top: 1rem; line-height: 1.55; font-size: 0.78rem">
+          Tech:
+          <a href="/health" target="_blank" rel="noopener noreferrer">status</a>
+          ·
+          <a href="/docs" target="_blank" rel="noopener noreferrer">API docs</a>
+        </p>
+      </aside>
+    </main>
+    <script src="/static/app.js" defer></script>
+  </body>
+</html>

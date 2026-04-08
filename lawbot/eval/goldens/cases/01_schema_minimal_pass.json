@@ -1,0 +1,14 @@
+{
+  "id": "schema-minimal-pass",
+  "tags": ["connectivity", "no-sources"],
+  "holdout": false,
+  "expected": { "hermes_passed": true },
+  "response": {
+    "answer": "Hello — the service is up.",
+    "verification_ok": true,
+    "verification_errors": [],
+    "vault_empty": true,
+    "session_id": "golden-session",
+    "audit": { "vault_chunk_ids": [], "task_regime": "connectivity" }
+  }
+}

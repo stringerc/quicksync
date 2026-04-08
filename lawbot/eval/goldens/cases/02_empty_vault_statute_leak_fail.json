@@ -1,0 +1,14 @@
+{
+  "id": "empty-vault-statute-leak-fail",
+  "tags": ["GA", "no-sources", "regression"],
+  "holdout": false,
+  "expected": { "hermes_passed": false },
+  "response": {
+    "answer": "Under O.C.G.A. § 9-3-33 the limitations period may apply.",
+    "verification_ok": true,
+    "verification_errors": [],
+    "vault_empty": true,
+    "session_id": "golden-session",
+    "audit": { "vault_chunk_ids": [], "task_regime": "conversational" }
+  }
+}

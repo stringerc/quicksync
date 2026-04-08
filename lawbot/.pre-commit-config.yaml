@@ -1,0 +1,16 @@
+# Optional: pip install pre-commit && pre-commit install
+# Pins: `pip install -r requirements-dev.txt` (ruff==0.15.9, bandit==1.9.4) — same as CI.
+#
+# always_run: run even with an empty index.
+#
+# Layout: if Lawbot is the git root, set entry to `bash scripts/pre_commit_security.sh`.
+# If Lawbot lives under a monorepo (git root above `lawbot/`), use `bash lawbot/scripts/pre_commit_security.sh`.
+repos:
+  - repo: local
+    hooks:
+      - id: lawbot-security-scan
+        name: ruff + bandit (scripts/security_scan.sh)
+        language: system
+        entry: bash lawbot/scripts/pre_commit_security.sh
+        pass_filenames: false
+        always_run: true

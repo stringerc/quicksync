@@ -1,0 +1,11 @@
+{
+  "comment": "Required (tag|regime) cells for coverage %. Add rows as the product matrix grows.",
+  "required_cells": [
+    "connectivity|connectivity",
+    "no-sources|connectivity",
+    "GA|conversational",
+    "regression|citation_audit",
+    "GA|filing_draft",
+    "federal|citation_audit"
+  ]
+}

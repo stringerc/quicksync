@@ -1,0 +1,20 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+data/
+taste_runs/
+*.db
+.DS_Store
+# Local one-off Lawbot runs (may contain privileged text)
+docs/LAST_LAWBOT_BASELINE_REPLY.json
+docs/LAST_LAWBOT_BASELINE_REPLY.txt
+docs/LAST_LAWBOT_BASELINE_REPLY_70b.json
+docs/LAST_LAWBOT_BASELINE_REPLY_70b.txt
+docs/COMPARE_BASELINE_8B_REPLY.txt
+# CI script output (also uploaded as Actions artifact)
+draft-quality-golden.jsonl
+# Local golden run telemetry (optional to commit)
+eval/runs/*.csv
+eval/runs/last_golden_failure.json
+eval/runs/matrix_report.json

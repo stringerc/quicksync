@@ -1,0 +1,22 @@
+**Audit overview**
+
+This message is long enough to trigger automatic citation review. The user pasted several cite-like strings. Below we map each to what appeared in retrieved excerpts this session.
+
+**Per extracted citation**
+
+- **Smith v. Jones** — Not found in vault excerpts; treat as unverified here.
+- **O.C.G.A. § 9-11-33** — Partial overlap: the vault contains procedural text but not the exact subsection language the user quoted.
+
+**Gaps / next steps**
+
+Obtain primary sources for any authority you plan to rely on in a filing. The following paragraphs expand on methodology without repeating the same block twice. Review each cite against the source system you license. Where excerpts conflict with the user's summary, prefer the excerpt. Where no excerpt exists, flag as not checked. Consider jurisdiction-specific treatises for secondary framing only. Preserve record citations for any motion practice. The analysis above is limited to what loaded into the vault for this turn. Additional research may change classifications. End of overview section.
+
+**Additional notes**
+
+Secondary sources are not substitutes for controlling law. The user should verify all reporters and pinpoint cites before filing. If the court requires a certificate of service, prepare that separately. If local rules impose word limits, edit before submission. The checklist below is illustrative rather than exhaustive. Contact qualified counsel for strategy. Preserve objections and privileges as appropriate. This paragraph adds length without duplicating prior paragraphs verbatim. Section markers use bold headers typical of audit mode rather than Markdown hash headings.
+
+**Closing**
+
+No holding is stated as legally verified without a vault quote. End.
+
+**Supplement A** Further detail appears here solely to exceed length thresholds used by the quality gate for long answers in audit mode. Each sentence adds content without copying earlier paragraphs. The user may ignore this supplement if the prior sections answered the question. **Supplement B** Repeat: audit replies often emphasize bold section labels rather than hash Markdown headings. **Supplement C** This pattern is intentional for fixture testing. **Supplement D** Additional filler ensures the character count crosses the long-answer boundary. **Supplement E** No duplicate paragraph blocks are intended; wording varies each time.
